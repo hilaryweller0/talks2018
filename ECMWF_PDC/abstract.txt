@@ -1,0 +1,5 @@
+Coupling convection with the continuity equation
+
+Many assumptions go into parameterisations of convection and the outcome is that these schemes perform badly, especially in the grey zone. A useful assumption that decouples convection schemes from the continuity equation is that convection schemes do not directly lead to net vertical mass transport. This assumption is clearly ridiculous but necessary to prevent convection schemes from generating acoustic and gravity waves outside the implicit solver. If convection schemes provided source terms to the continuity equation which were treated explicitly, the model would become unstable due to explicit treatment of acoustic and gravity waves.
+
+This talk will describe how conditional filtering can be used to derive a full set of multi-fluid equations which will allow sub-grid scale convection in one fluid and stable air in another. This equation set includes interactions between convection and the continuity equation. A semi-implicit solution technique is presented which includes interactions of both fluids with the continuity equation and which is therefore stable. 

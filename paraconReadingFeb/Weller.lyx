@@ -1,0 +1,1226 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass beamer
+\begin_preamble
+\usepackage{animate}
+
+% hack to get natbib working with beamer
+\renewcommand{\newblock}{}
+
+% list modifications
+\setlength{\leftmargini}{0em}
+\setlength{\leftmarginii}{1em}
+
+% make $\times$, $+$, $-$ and $=$ use less space
+\newcommand{\tims}{\negthinspace \times \negthinspace}
+\newcommand{\eq}{\negthinspace = \negthinspace}
+\newcommand{\plus}{\negthinspace + \negthinspace}
+\newcommand{\minus}{\text{-}}
+\newcommand{\smallcdot}{\negthinspace \cdot \negthinspace}
+
+\newcommand{\nicefrac}[2]{\ensuremath ^{#1}\!\!/\!_{#2}}
+\newcommand{\half}{\nicefrac{1}{2}}
+\usepackage { fancybox}
+
+\setlength{\tabcolsep}{2pt}
+\end_preamble
+\options serif
+\use_default_options false
+\maintain_unincluded_children false
+\language british
+\language_package none
+\inputencoding auto
+\fontencoding global
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 10
+\spacing single
+\use_hyperref false
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref section
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 2
+\use_package mathdots 2
+\use_package mathtools 1
+\use_package mhchem 2
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip 0bp
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\begin_inset VSpace -1.5cm
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Numerical solution of the multi-fluid equations
+\begin_inset VSpace -0.5cm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+Hilary Weller and 
+\begin_inset Newline newline
+\end_inset
+
+Will McIntyre 
+\size footnotesize
+
+\begin_inset Newline newline
+\end_inset
+
+(Meteorology, University of Reading)
+\end_layout
+
+\begin_layout Date
+\begin_inset VSpace -2cm
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="33text%">
+<column alignment="center" valignment="top" width="33text%">
+<column alignment="center" valignment="top" width="33text%">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+28 February 2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename /home/hilary/graphics/MetLogo.png
+	lyxscale 20
+	scale 20
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Conditionally Averaged Dry Euler Equations
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\frac{\partial\mathbf{u}_{i}}{\partial t}+\mathbf{u}_{i}\cdot\nabla\mathbf{u}_{i} & = & -2\boldsymbol{\Omega}\times\mathbf{u}_{i}-c_{p}\theta_{i}\nabla\pi+\mathbf{g}\label{eq:condMomAdv}\\
+ & + & \sum_{j\ne i}\left(\frac{\sigma_{j}\rho_{j}}{\sigma_{i}\rho_{i}}S_{ji}(\mathbf{u}_{j}-\mathbf{u}_{i})-\mathbf{D}_{ij}\right)\\
+\frac{\partial\sigma_{i}\rho_{i}}{\partial t}+\nabla\cdot(\sigma_{i}\rho_{i}\mathbf{u}_{i}) & = & \sum_{j\ne i}\left(\sigma_{j}\rho_{j}S_{ji}-\sigma_{i}\rho_{i}S_{ij}\right)\label{eq:condCont-1}\\
+\frac{\partial\theta_{i}}{\partial t}+\mathbf{u}_{i}\cdot\nabla\theta_{i} & = & \sum_{j\ne i}\left(\frac{\sigma_{j}\rho_{j}}{\sigma_{i}\rho_{i}}S_{ji}(\theta_{j}-\theta_{i})\right)\label{eq:condThetaAdv}
+\end{eqnarray}
+
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma_{i}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Volume fraction in partition 
+\begin_inset Formula $i$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\pi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exner pressure 
+\begin_inset Formula $=(p/p_{0})^{\kappa}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma_{i}\rho_{i}S_{ij}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+transfer rate of mass from partition 
+\begin_inset Formula $i$
+\end_inset
+
+ to partition 
+\begin_inset Formula $j$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathbf{D}_{ij}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+drag exerted from partition 
+\begin_inset Formula $i$
+\end_inset
+
+ onto partition 
+\begin_inset Formula $j$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Frame
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Equation of State
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{0}\pi^{\frac{1-\kappa}{\kappa}}=R\rho_{i}\theta_{i}=R\rho\theta=R\sum_{i}\sigma_{i}\rho_{i}\theta_{i}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Numerical Solution
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Finite Volume Advection
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Bounded advection of 
+\begin_inset Formula $\sigma_{i}\rho_{i}$
+\end_inset
+
+ (TVD scheme with van-Leer limiter)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\theta_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{u}_{i}$
+\end_inset
+
+ advected using using flux form operators:
+\begin_inset Formula 
+\[
+\mathbf{u}_{i}\cdot\nabla\theta_{i}=\nabla\cdot\left(\theta_{i}\mathbf{u}_{i}\right)-\theta_{i}\nabla\cdot\mathbf{u}_{i}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Lorenz C-grid staggering
+\end_layout
+
+\begin_layout Itemize
+Semi-implict: implicit acoustic waves
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Velocity and density in each fluid expressed as a function of Exner pressure,
+ 
+\begin_inset Formula $\pi$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Substituted into continuity equation to get Helmholtz equation for 
+\begin_inset Formula $\pi$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Rising Bubble, two fluids with identical initial conditions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Frame
+Hydrostatically balanced fluid at 300K with a warm bubble (up to 302K).
+ Two different initial 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ distributions
+\end_layout
+
+\begin_layout Frame
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=0.48
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_identical/sigmaBubble/animategraphics/sigmaTheta_}{0}{20}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=0.48
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_identical/sigmaBubble2/animategraphics/sigmaTheta_}{0}{20
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Rising Bubble, two fluids with different initial conditions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Itemize
+No transfer terms
+\end_layout
+
+\begin_layout Itemize
+Two initially hydrostatically balanced, stationary fluids
+\end_layout
+
+\begin_layout Itemize
+Fluid 0 (stable partition):
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\theta_{0}=300$
+\end_inset
+
+K
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\sigma_{1}=\begin{cases}
+0.5 & \ \text{circle near the ground}\\
+1 & \ \text{elsewhere}
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Fluid 2 (buoyant partition):
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\theta_{2}=\begin{cases}
+300\text{K}+\theta^{\prime} & \ \text{in circle}\\
+300\text{K} & \ \text{elsewhere}
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\sigma_{2}=\begin{cases}
+0.5 & \ \text{circle near the ground}\\
+0 & \ \text{elsewhere}
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_05/noDrag/animategraphics/sigmaTheta_}{0}{4}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Drag Between Fluids
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+From formula for drag on a rising bubble
+\begin_inset Formula 
+\[
+D_{ij}=\sigma_{j}\frac{C_{D}}{r_{c}}\frac{\bar{\rho}}{\rho_{i}}|\mathbf{u}_{i}-\mathbf{u}_{j}|\left(\mathbf{u}_{i}-\mathbf{u}_{j}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula $r_{c}$
+\end_inset
+
+ = bubble or plume radius.
+\end_layout
+
+\begin_layout Plain Layout
+As 
+\begin_inset Formula $\sigma_{i}$
+\end_inset
+
+ becomes small we need 
+\begin_inset Formula $r_{c}$
+\end_inset
+
+ to become small so that the drag is large and the vanishing partition moves
+ with the mean flow:
+\begin_inset Formula 
+\begin{equation}
+r_{c}=\max\left(r_{\min},\ r_{\max}\prod_{i}\sigma_{i}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Try 
+\begin_inset Formula $C_{D}=1$
+\end_inset
+
+, 
+\begin_inset Formula $r_{\min}=100$
+\end_inset
+
+m, 
+\begin_inset Formula $r_{\max}=2000$
+\end_inset
+
+m
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_05/loDrag/animategraphics/sigmaTheta_}{0}{20}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Mass Transfer Between Partitions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Diffusion of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Similar function to convective entrainment
+\end_layout
+
+\begin_layout Itemize
+Diffusion coefficient, 
+\begin_inset Formula $K_{\sigma}$
+\end_inset
+
+, could be chosen based on wind shear
+\begin_inset Formula 
+\[
+\sigma_{i}\rho_{i}S_{ij}=\frac{K_{\sigma}}{2}\max\left(\nabla^{2}\left(\sigma_{j}\rho_{j}-\sigma_{i}\rho_{i}\right),\ 0\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Total mass is not diffused
+\end_layout
+
+\begin_layout Itemize
+Will control oscillations in 
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Try 
+\begin_inset Formula $K_{\sigma}=200\ \text{m}^{2}\text{s}^{-1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_05/loDiffusion/animategraphics/sigmaTheta_}{0}{20}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Mass Transfer based on Buoyancy Perturbations
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Itemize
+Positive 
+\begin_inset Formula $\theta_{0}$
+\end_inset
+
+ anomalies should be transferred to partition one
+\end_layout
+
+\begin_layout Itemize
+How do we write this in terms of PDEs?
+\end_layout
+
+\begin_layout Itemize
+How do we diagnose this without using a reference state?
+\begin_inset Formula 
+\begin{eqnarray*}
+S_{01}=\begin{cases}
+-K_{\theta}\frac{\nabla^{2}\theta_{0}}{\theta_{0}} & \text{when}\ \nabla^{2}\theta_{0}<0\\
+0 & \text{otherwise}
+\end{cases}\\
+S_{10}=\begin{cases}
+K_{\theta}\frac{\nabla^{2}\theta_{1}}{\theta_{1}} & \text{when}\ \nabla^{2}\theta_{1}>0\\
+0 & \text{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Added to mass transfer due to diffusion
+\end_layout
+
+\begin_layout Itemize
+Simulation using 
+\begin_inset Formula $\sigma_{0}=0$
+\end_inset
+
+ everywhere initially
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $K_{\theta}=10^{6}\ \text{m}^{2}\text{s}^{-1}$
+\end_inset
+
+, 
+\begin_inset Formula $K_{\sigma}=200\ \text{m}^{2}\text{s}^{-1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_withMassTransferTheta/animategraphics/sigmaTheta_}{0}{20}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Mass Transfer based on Horizontal Divergence
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray}
+\sigma_{0}\rho_{0}S_{01}=\begin{cases}
+-\nabla_{h}\cdot(\sigma_{0}\rho_{0}\mathbf{u}_{0}) & \text{if}\ \nabla_{h}\cdot(\sigma_{0}\rho_{0}\mathbf{u}_{0})<0\ \text{and}\ \mathbf{u}_{0}\cdot\mathbf{g}<0\\
+0 & \text{otherwise}
+\end{cases}\label{eq:divTransfer01}\\
+\sigma_{1}\rho_{1}S_{10}=\begin{cases}
+\nabla_{h}\cdot(\sigma_{1}\rho_{1}\mathbf{u}_{1}) & \text{if}\ \nabla_{h}\cdot(\sigma_{1}\rho_{1}\mathbf{u}_{1})>0\ \text{and}\ \mathbf{u}_{1}\cdot\mathbf{g}>0\\
+0 & \text{otherwise}
+\end{cases}\label{eq:divTransfer10}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Horizontal divergence which leads to ascent should transfer mass into the
+ buoyant partition
+\end_layout
+
+\begin_layout Itemize
+Added to mass transfer due to diffusion
+\end_layout
+
+\begin_layout Itemize
+Simulation using 
+\begin_inset Formula $\sigma_{0}=0$
+\end_inset
+
+ everywhere initially
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $K_{\sigma}=200\ \text{m}^{2}\text{s}^{-1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "48col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace 2cm
+\end_inset
+
+
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=
+\backslash
+linewidth,controls,poster=first]{3}{/home/hilary/OpenFOAM/hilary-dev/run/hilary/
+warmBubble/partitioned_withMassTransferDiv/animategraphics/sigmaTheta_}{0}{20}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+References
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "numerics"
+options "plainnat"
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_body
+\end_document
