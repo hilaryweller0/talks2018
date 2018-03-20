@@ -28,7 +28,7 @@
 
 \newcommand{\AMMMdir}{/home/hilary/OpenFOAM/hilary-dev/AMMM/run/advection/advectionOTFoam/runAll}
 \end_preamble
-\options serif
+\options serif,handout
 \use_default_options false
 \maintain_unincluded_children false
 \language british
@@ -94,7 +94,7 @@
 \quotes_language english
 \papercolumns 1
 \papersides 1
-\paperpagestyle default
+\paperpagestyle plain
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -798,8 +798,7 @@ re equation for mesh potential,
 :
 \begin_inset Formula 
 \begin{eqnarray*}
-\det\left(\nabla\left(\bm{\xi}+\nabla\phi\right)\right)m\left(\mathbf{x}\right) & = & \text{const}\\
-\text{or }\ \det\left(I+H\left(\phi\right)\right) & = & \frac{\text{const}}{m\left(\mathbf{x}\right)}
+\det\left(\nabla\left(\bm{\xi}+\nabla\phi\right)\right)m\left(\mathbf{x}\right) & = & \text{const}
 \end{eqnarray*}
 
 \end_inset
@@ -2074,8 +2073,8 @@ pause
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathscr{V}_{f}^{n+1}\rho^{\prime} & = & \mathscr{V}_{f}^{n}\rho^{n}-\Delta t\left(\sum_{\text{faces}}\rho_{f}^{n}\phi_{r}\right)\\
-\mathscr{V}_{f}^{n+1}\rho^{n+1} & = & \mathscr{V}_{f}^{n}\rho^{n}-\frac{\Delta t}{2}\left(\sum_{\text{faces}}\rho_{f}^{n}\phi_{r}+\sum_{\text{faces}}\rho_{f}^{\prime}\phi_{r}\right)
+\mathscr{V}^{n+1}\rho^{\prime} & = & \mathscr{V}^{n}\rho^{n}-\Delta t\left(\sum_{\text{faces}}\rho_{f}^{n}\phi_{r}\right)\\
+\mathscr{V}^{n+1}\rho^{n+1} & = & \mathscr{V}^{n}\rho^{n}-\frac{\Delta t}{2}\left(\sum_{\text{faces}}\rho_{f}^{n}\phi_{r}+\sum_{\text{faces}}\rho_{f}^{\prime}\phi_{r}\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2332,6 +2331,10 @@ Advection over a Mountain and a Valley
 
 \begin_deeper
 \begin_layout Standard
+Divergence free velocity field
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula $100\times100$
 \end_inset
 
@@ -2432,6 +2435,10 @@ Advection over a Mountain and a Valley
 
 \begin_deeper
 \begin_layout Standard
+Divergence free velocity field
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula $100\times100$
 \end_inset
 
@@ -2505,6 +2512,53 @@ animategraphics[width=0.48
 linewidth,controls,poster=first]{3}{
 \backslash
 AMMMdir/movingOverMountains/animategraphics/uniT_}{0}{12}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Advection over a Mountain and a Valley
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+The volume of the domain changes as the resolution of the mountain changes
+\begin_inset Newline newline
+\end_inset
+
+Cross section of the domain through the mountains
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+animategraphics[width=0.98
+\backslash
+linewidth,controls,poster=first]{3}{
+\backslash
+AMMMdir/movingOverMountains/animategraphics/meshOverMountain_}{0}{12}
 \end_layout
 
 \end_inset
@@ -2619,6 +2673,236 @@ Minumum and maximum
 status open
 
 \begin_layout Plain Layout
+Calculate the Conserved Mesh Volume
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "58col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $V$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cell volume from vertex locations
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $AV$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Real cell volume
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+We do not want to do expensive conservative mappings to calculate 
+\begin_inset Formula $AV$
+\end_inset
+
+ every time step.
+\end_layout
+
+\begin_layout Itemize
+But we know the mesh volume flux through every face each time step
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "40col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset External
+	template XFig
+	filename figs/AV.fig
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{A^{n+1}V^{n+1}-A^{n}V^{n}}{\Delta t}=\sum_{\text{faces}}A_{f}^{n}\phi_{m}^{n+1/2}
+\]
+
+\end_inset
+
+where 
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi_{m}=\mathbf{v}\cdot d\mathbf{S}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+is the mesh flux
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $A_{f}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+is 
+\begin_inset Formula $A$
+\end_inset
+
+ interpolated onto face 
+\begin_inset Formula $f$
+\end_inset
+
+ using upwind interpolation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Then solve the advection equation
+\begin_inset Formula 
+\[
+\frac{A^{n+1}V^{n+1}\rho^{n+1}-A^{n}V^{n}\rho^{n}}{\Delta t}=-\sum_{\text{faces}}\rho_{f}A_{f}^{n}(\mathbf{u}\cdot d\mathbf{S}-\phi_{m})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
 Advection over a Mountain and a Valley
 \end_layout
 
@@ -2628,6 +2912,10 @@ Advection over a Mountain and a Valley
 \end_layout
 
 \begin_deeper
+\begin_layout Standard
+Divergence free velocity field
+\end_layout
+
 \begin_layout Standard
 \begin_inset Formula $100\times100$
 \end_inset
@@ -2727,6 +3015,10 @@ Advection over a Mountain and a Valley
 \end_layout
 
 \begin_deeper
+\begin_layout Standard
+Divergence free velocity field
+\end_layout
+
 \begin_layout Standard
 \begin_inset Formula $100\times100$
 \end_inset
@@ -2880,7 +3172,6 @@ and on the real domain
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename /mnt/homer2/hilary/OpenFOAM/hilary-dev/AMMM/run/advection/advectionOTFoam/runAll/movingOverMountainsA/plots/ATchange.eps
-	display false
 	width 45text%
 
 \end_inset
@@ -2918,16 +3209,6 @@ and on the real domain
 
 \end_layout
 
-\begin_layout Separator
-
-\lang english
-\begin_inset Note Comment
-status open
-
-\begin_layout Separator
-
-\end_layout
-
 \begin_layout Frame
 \begin_inset Argument 4
 status open
@@ -2942,7 +3223,7 @@ Shallow Water Equations
 \end_layout
 
 \begin_deeper
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset Box Frameless
 position "t"
 hor_pos "c"
@@ -3156,7 +3437,7 @@ Apply Reynolds transport theorem to momentum in each cell of volume
 :
 \end_layout
 
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset Formula 
 \[
 \frac{\left(\mathscr{V}h\mathbf{u}\right)^{n+1}-\left(\mathscr{V}h\mathbf{u}\right)^{n}}{\Delta t}=-\int_{S}h\mathbf{u}\left(\mathbf{u}-\mathbf{v}\right)\cdot\mathbf{dS}-2\int_{\mathscr{V}}h\bm{\Omega}\times\mathbf{u}\ dV-\int_{\mathscr{V}}gh\nabla h\ dV
@@ -3176,7 +3457,7 @@ Semi-implicit Crank-Nicolson time-stepping with off-centering 3/5 and deferred
 ):
 \end_layout
 
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
 \left(\mathscr{V}h\mathbf{u}\right)^{n+1} & = & \left(\mathscr{V}h\mathbf{u}\right)^{n}\\
@@ -3224,7 +3505,7 @@ Interacting Vortices on a doubly periodic
 \end_layout
 
 \begin_deeper
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="2">
 <features rotate="0" tabularvalignment="middle">
@@ -3263,7 +3544,7 @@ Interacting Vortices on a doubly periodic
 
 \end_layout
 
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -3319,7 +3600,7 @@ Monitor function based on gradient of vorticity
 \end_layout
 
 \begin_deeper
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset Formula $100\times100$
 \end_inset
 
@@ -3366,7 +3647,7 @@ Monitor function based on gradient of vorticity
 
 \end_layout
 
-\begin_layout Plain Layout
+\begin_layout Standard
 \noindent
 \align center
 \begin_inset ERT
@@ -3865,11 +4146,6 @@ Courant
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
 \begin_layout Frame
 \begin_inset Argument 4
 status open
@@ -3912,15 +4188,8 @@ Accuracy gains using adaptivity
 \end_layout
 
 \begin_layout Itemize
-need small flow over boundary to maintain preservation of constants
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Formula $\rightarrow$
-\end_inset
-
- lack of mass conservation
+We have achieved exact conservation and preservation of uniform fields over
+ mountains without conservative remapping 
 \begin_inset ERT
 status open
 
@@ -3952,6 +4221,10 @@ Solving Monge-Ampère equation is
 
 \begin_layout Itemize
 Accuracy gains using adaptivity
+\end_layout
+
+\begin_layout Itemize
+Distorted meshes can lead to spurious solutions
 \end_layout
 
 \end_deeper
